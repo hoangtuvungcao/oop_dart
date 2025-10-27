@@ -1,77 +1,96 @@
 
-# Bậc Thầy Trí Tuệ 
+# ĐỀ TÀI:  Game Lật Thẻ Ghi Nhớ (Thiết kế & Phát triển OOP với Dart/Flutter)
 
 ---
 
-## MỤC LỤC
+## 1. Tổng quan đề tài
 
-1. Giới thiệu dự án  
-2. Tính năng nổi bật  
-3. Kiến trúc & Nguyên lý OOP  
-4. Mô hình lớp & luồng hoạt động  
-5. Hướng dẫn cài đặt & chạy  
-6. Bảng xếp hạng & cài đặt  
-7. Kiểm thử & đóng góp  
-8. Tài liệu tham khảo  
-9. Phụ lục  
+- **Mục tiêu:** Xây dựng game lật thẻ “” với gameplay ghi nhớ, giao diện tối ưu (Dark/Light), hiệu ứng và âm thanh sinh động, nhiều level, bomb, trợ giúp, bảng xếp hạng, cá nhân hóa trải nghiệm.
+- **Nền tảng:** Flutter (Dart), hướng tới Android/iOS, có thể mở rộng Web/Desktop.
+- **Đối tượng người dùng:** Người chơi casual, học sinh, sinh viên, mọi lứa tuổi muốn rèn trí nhớ, giải trí nhẹ nhàng.
+- **Phạm vi:** Gameplay cốt lõi, 10 level, bomb tăng dần, 3 loại trợ giúp, lưu điểm cục bộ, có thể mở rộng cloud/online.
 
 ---
 
-## 1. Giới thiệu dự án
+## 2. Tóm tắt yêu cầu chức năng
 
-**Bậc Thầy Trí Tuệ** là trò chơi lật thẻ ghi nhớ phát triển bằng Flutter/Dart, hướng tới trải nghiệm mượt mà, giao diện hiện đại, đa nền tảng (Android/iOS/Web). Game giúp rèn luyện trí nhớ, phản xạ, phù hợp mọi lứa tuổi.
-
-- **Mục tiêu:**  
-  - Cung cấp gameplay lật thẻ thử thách trí nhớ với nhiều cấp độ, bomb, trợ giúp.
-  - Cá nhân hóa trải nghiệm: theme, âm thanh, font, bảng xếp hạng.
-- **Đối tượng:** Người chơi casual, học sinh, sinh viên, gia đình.
-
----
-
-## 2. Tính năng nổi bật
-
-- **Gameplay ghi nhớ thẻ:** Lật cặp, tránh bomb, chạy đua thời gian.
-- **Âm thanh đa nền tảng:** SoundManager đồng bộ âm lượng, nhạc nền, hiệu ứng.
-- **Bảng xếp hạng & lịch sử:** Leaderboard, PlayRecord lưu kết quả, hiển thị top.
-- **Trợ giúp:** Thêm thời gian, mở toàn bộ thẻ, vô hiệu hóa bomb.
-- **Cá nhân hóa:** Đổi theme sáng/tối, chỉnh âm thanh, cỡ chữ.
-- **Lưu trữ local:** SharedPreferences lưu dữ liệu người chơi, cài đặt.
+- **Menu chính:** Logo , nền động, 3 nút: Bắt đầu, Bảng xếp hạng, Cài đặt.
+- **Màn nhập tên:** Textbox bắt buộc, lưu tên, bắt đầu từ Level 1.
+- **Màn chơi:** 
+  - Top bar: Tên, Level, Điểm, Đồng hồ.
+  - Lưới thẻ PNG (4–20 thẻ), bomb từ Level 4.
+  - Preview 5s, lật 2 thẻ: đúng cặp → ẩn, sai → úp lại, bomb → trừ thời gian.
+  - Trợ giúp: +10s, mở toàn bộ, xóa bomb (3/lv).
+  - Thời gian: L1=30s, mỗi level +8s.
+  - Điểm: đúng/sai, tốc độ, combo.
+- **Bảng xếp hạng:** Theo điểm, theo level.
+- **Cài đặt:** Theme Dark/Light, âm thanh, font size.
+- **Hiệu ứng/âm thanh:** Flip, success/fail, bomb, popup Game Over.
 
 ---
 
-## 3. Kiến trúc & Nguyên lý OOP
+## 3. Phạm vi kỹ thuật & giả định
 
-- **Encapsulation:** Giấu chi tiết triển khai, expose API cần thiết.
-- **Inheritance:** CardBase → NormalCard/BombCard, dễ mở rộng.
-- **Polymorphism:** List<CardBase> chứa nhiều loại card, xử lý chung.
-- **Abstraction:** LevelBuilder che giấu công thức sinh level.
-- **Composition:** Controller chứa nhiều model (settings, leaderboard).
-
-**Mẫu thiết kế:**  
-- Singleton: Session, SoundManager, ThemeNotifier.  
-- Factory: LevelBuilder.  
-- Observer: ThemeNotifier, SettingsNotifier.
+- **SDK/IDE:** Flutter 3.x, Dart 3.x, VS Code/Android Studio.
+- **Thiết bị:** Android API 21+, iOS 13+, Web (sau).
+- **State:** Provider/ChangeNotifier.
+- **Lưu trữ:** shared_preferences (cài đặt), Hive hoặc JSON (leaderboard).
+- **Âm thanh:** audioplayers. Ảnh PNG trong assets/.
+- **Test:** flutter_test, mocktail.
 
 ---
 
-## 4. Mô hình lớp & luồng hoạt động
+## 4. Kiến trúc tổng thể
 
-### a) Mô hình lớp (Mermaid UML)
+- **Pattern:** MVVM nhẹ + OOP.
+  - Models: Player, Level, CardBase (NormalCard, BombCard), Settings, Leaderboard.
+  - Controllers: GameController, SettingsController, LeaderboardController.
+  - Views: MainMenuScreen, PlayerInputScreen, GameScreen, RankingScreen, SettingsScreen.
+  - Services: AudioService, StorageService, ThemeService, TimerService.
+- **Luồng dữ liệu:** View → Controller → Model → notifyListeners → View.
+- **Routing:** Navigator.push/pop.
+
+```mermaid
+flowchart LR
+  A[MainMenu] -->|Bắt đầu| B[PlayerInput]
+  A -->|Bảng xếp hạng| C[Ranking]
+  A -->|Cài đặt| D[Settings]
+  B --> E[GameScreen]
+  E -->|Thắng Level| E
+  E -->|Game Over| A
+  E -->|Xem BXH| C
+  C -->|Quay lại| A
+  D -->|Quay lại| A
+```
+
+---
+
+## 5. Use Cases chính
+
+- UC1: Bắt đầu trò chơi (MainMenu → PlayerInput → GameScreen).
+- UC2: Chơi 1 level (Preview → Lật thẻ → Thắng/Thua).
+- UC3: Dùng trợ giúp (giới hạn/lv).
+- UC4: Xem bảng xếp hạng.
+- UC5: Cài đặt cá nhân hóa.
+
+---
+
+## 6. Mô hình lớp (OOP)
 
 ```mermaid
 classDiagram
-  class GameRuntimeController {
+  class GameController {
     - Player currentPlayer
-    - LevelModel currentLevel
+    - Level currentLevel
     - GameState state
     - Leaderboard leaderboard
-    - SettingsModel settings
-    + startGame()
-    + startLevel()
-    + onCardTap(CardBase card)
+    - Settings settings
+    + startNewGame(String name)
+    + startLevel(int levelNumber)
+    + onCardTapped(CardBase card)
     + useHelp(HelpType type)
     + onTick()
-    + endLevel(win)
+    + endLevel(bool win)
   }
 
   class Player {
@@ -80,141 +99,156 @@ classDiagram
     + int highestLevel
   }
 
-  class LevelModel {
+  class Level {
     + int levelNumber
-    + List~CardBase~ cards
+    + int baseCardCount
+    + int bombsCount
     + int timeLimit
     + int timeRemaining
+    + int previewSeconds
+    + List~CardBase~ cards
     + Map~HelpType,int~ helpRemaining
-    + preview()
-    + revealAll()
+    + initialize()
+    + revealAll(int seconds)
   }
 
   class CardBase {
     + String id
     + bool isFaceUp
     + bool isMatched
+    + flip()
   }
 
   class NormalCard {
     + String pairId
-    + String imagePath
   }
 
   class BombCard {
     + int penaltyTime
-    + bool isDefused
   }
 
   class Leaderboard {
     + List~Player~ players
-    + List~PlayRecord~ records
     + sortByScore()
     + sortByLevel()
     + addOrUpdate(Player p)
   }
 
-  class SettingsModel {
-    + ThemeMode themeMode
+  class Settings {
+    + ThemeMode theme
     + bool soundEnabled
     + double fontSize
   }
 
-  GameRuntimeController --> Player
-  GameRuntimeController --> LevelModel
-  GameRuntimeController --> Leaderboard
-  GameRuntimeController --> SettingsModel
-  LevelModel --> CardBase
+  GameController --> Player
+  GameController --> Level
+  GameController --> Leaderboard
+  GameController --> Settings
+  Level --> CardBase
   CardBase <|-- NormalCard
   CardBase <|-- BombCard
 ```
 
-### b) Luồng hoạt động chính
+---
 
-1. Đăng nhập/Đăng ký → Menu → Nhập tên → Chơi game → Xem điểm/xếp hạng → Cài đặt
-2. Chơi game: lật thẻ, dùng trợ giúp, tránh bomb, thắng/thua → lưu kết quả
+## 7. Thiết kế màn hình (UI/UX)
+
+- **MainMenu:** Logo, nền động, 3 nút lớn.
+- **PlayerInput:** Nhập tên, xác nhận.
+- **GameScreen:** Top bar, lưới thẻ, trợ giúp, popup kết quả.
+- **Ranking:** 2 tab, danh sách người chơi.
+- **Settings:** Đổi theme, âm lượng, font.
+- **Accessibility:** Font scalable, màu tương phản, haptic feedback.
 
 ---
 
-## 5. Hướng dẫn cài đặt & chạy
+## 8. Quy tắc level, bomb, trợ giúp, thời gian, điểm
 
-### 5.1 Yêu cầu hệ thống
+- Level: 4–20 thẻ, tăng dần; bomb từ L4, mỗi 2 level +1 bomb.
+- Preview: 5s đầu mỗi level.
+- Thời gian: 30s + 8s*(level-1).
+- Điểm: đúng +100, combo +20*n, sai -10, thắng thưởng thời gian.
+- Trợ giúp: mỗi loại tối đa 1–3/lv, áp chế tài đúng mô tả.
 
-- Flutter SDK ≥ 3.0.0
-- Dart ≥ 3.0.0
-- IDE: VS Code (Flutter extension) hoặc Android Studio/IntelliJ
+---
 
-### 5.2 Cài đặt phụ thuộc
+## 9. Luồng hoạt động & state machine
 
-```bash
-flutter pub get
+```mermaid
+stateDiagram-v2
+  [*] --> Menu
+  Menu --> PlayerInput: Bắt đầu
+  Menu --> Ranking: BXH
+  Menu --> Settings: Cài đặt
+  PlayerInput --> LevelPreview: Xác nhận tên
+  LevelPreview --> Playing: Hết 5s
+  Playing --> Paused: Mở popup
+  Paused --> Playing: Tiếp tục
+  Playing --> LevelClear: Hết thẻ còn thời gian
+  Playing --> GameOver: Hết giờ
+  LevelClear --> NextLevel: Tự động
+  NextLevel --> LevelPreview
+  GameOver --> Menu
 ```
 
-### 5.3 Chạy ứng dụng
+---
 
-```bash
-flutter run
-# Hoặc build web
-flutter run -d chrome
-```
+## 10. Thuật toán & dữ liệu
 
-### 5.4 Kiểm thử
-
-```bash
-flutter test
-```
+- Khởi tạo level: tính số thẻ, bomb, sinh cặp, thêm bomb, shuffle.
+- Xử lý lật thẻ: kiểm tra cặp, bomb, cập nhật trạng thái, điểm, combo.
+- Trợ giúp: kiểm tra quota, áp hiệu ứng, cập nhật UI.
+- Đồng hồ: giảm thời gian mỗi giây, hết giờ → GameOver.
 
 ---
 
-## 6. Bảng xếp hạng & cài đặt
+## 11. Dịch vụ hạ tầng
 
-- **Leaderboard:** Hai tab: điểm cao nhất, level cao nhất.  
-- **Cài đặt:** Đổi theme, âm thanh, font size.  
-- **Lưu trữ:** SharedPreferences/Hive đảm bảo dữ liệu bền vững.
-
----
-
-## 7. Kiểm thử & đóng góp
-
-- **Unit test:** Kiểm tra logic thẻ, bomb, trợ giúp, điểm.
-- **Widget test:** Render màn hình, thao tác UI.
-- **Integration test:** Flow hoàn chỉnh từ menu đến Game Over.
-- **Đóng góp:** Fork, tạo branch, mô tả rõ Pull Request, ưu tiên comment tiếng Việt ngắn gọn.
+- **AudioService:** Quản lý phát âm thanh, tắt/mở.
+- **StorageService:** Lưu/đọc Settings, Leaderboard.
+- **ThemeService:** Quản lý ThemeMode, ảnh nền.
+- **TimerService:** Quản lý đồng hồ nếu tách rời controller.
 
 ---
 
-## 8. Tài liệu tham khảo
+## 12. Lưu trữ
 
-1. Flutter: https://docs.flutter.dev  
-2. Dart: https://dart.dev/guides  
-3. Sách "Flutter for Beginners" – Alessandro Biessek  
-4. Sách "Object-Oriented Programming with Dart" – Sanjib Sinha  
-5. https://stackoverflow.com/questions/tagged/flutter  
-6. https://github.com/flutter/flutter  
+- Player: `{name, score, highestLevel}`
+- Leaderboard: `List<Player>`
+- Settings: `{theme, soundEnabled, fontSize}`
 
 ---
 
-## 9. Phụ lục
+## 13. Kiểm thử
 
-### 9.1 Hình ảnh minh họa
+- Unit test: logic thẻ, bomb, trợ giúp, điểm.
+- Widget test: render màn hình, thao tác cơ bản.
+- Integration: flow hoàn chỉnh từ menu đến GameOver.
 
-- Giao diện đăng nhập, menu, nhập tên, chơi game, bảng xếp hạng, cài đặt, hiệu ứng lật thẻ, thắng/thua.
-- Sơ đồ luồng hoạt động, sơ đồ quan hệ giữa các lớp.
+---
 
-### 9.2 Bảng biểu, sơ đồ
+## 14. Kế hoạch phát triển
 
-- Bảng cấu trúc các class chính, bảng thông số các level, bảng chức năng từng màn hình.
+- Giai đoạn 1: Khung dự án, cấu trúc thư mục.
+- Giai đoạn 2: Models, Controller.
+- Giai đoạn 3: UI, Service, Test.
+- Giai đoạn 4: Hoàn thiện, tối ưu, đóng gói.
 
-### 9.3 Mã nguồn mẫu (trích đoạn)
+---
 
-- Định nghĩa các lớp CardBase, NormalCard, BombCard (mô tả logic).
-- Quy trình sinh bộ thẻ, xáo trộn, kiểm tra ghép cặp.
-- Cách quản lý điểm số, lưu lịch sử chơi, cập nhật bảng xếp hạng.
+## 15. Tài liệu tham khảo
 
-### 9.4 Hướng dẫn đóng góp, liên hệ
+- Flutter: https://docs.flutter.dev  
+- Dart: https://dart.dev/guides  
+- Sách, diễn đàn, StackOverflow, Github Flutter.
 
-- Hướng dẫn đóng góp mã nguồn, báo lỗi, đề xuất tính năng mới qua Github/Pull Request.
-- Email liên hệ tác giả nếu muốn hợp tác, sử dụng thương mại.
+---
+
+## 16. Phụ lục
+
+- Hình ảnh giao diện, sơ đồ, bảng biểu.
+- Hướng dẫn cài đặt, chạy, kiểm thử.
+- Mã nguồn mẫu, cấu hình pubspec.yaml.
 
 ---
 
