@@ -1,0 +1,40 @@
+name: giai_doan_5
+description: "Game lật thẻ bài trí tuệ"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  just_audio: ^0.10.5
+  shared_preferences: ^2.2.2  # Local storage (lưu tk/mk/điểm/bxh)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1   #  tạo icon app
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/photo/
+    - assets/audio/
+    - assets/levels/
+    - assets/fonts/
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#ffffff"  # màu nền (hoặc để transparent)
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
