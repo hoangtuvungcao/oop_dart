@@ -342,7 +342,7 @@ flutter test
 
 ###  Giao diện cơ bản
 
-| ![Đăng nhập](img/dangnhap.png) | ![Đăng ký](img/dangky.png) | ![Nhập tên](img/nhapten.png) |
+| ![Đăng nhập](png/dangnhap.jpg) | ![Đăng ký](png/dangky.jpg) | ![Nhập tên](png/nhapten.jpg) |
 |:--:|:--:|:--:|
 | **Đăng nhập** | **Đăng ký tài khoản mới** | **Nhập tên người chơi** |
 
@@ -350,11 +350,11 @@ flutter test
 
 ###  Màn hình chính & chơi game
 
-| ![Menu chính](img/menu.png) | ![Giao diện chơi](img/choi_1.png) |
+| ![Menu chính](png/menu.jpg) | ![Giao diện chơi](png/choi_1.jpg) |
 |:--:|:--:|
 | **Menu chính** – chọn chế độ chơi, cài đặt, bảng xếp hạng,... | **Màn chơi chính** – lưới thẻ, đồng hồ, điểm số và trợ giúp |
 
-| ![Sai thẻ](img/saithe.png) | ![Đúng thẻ](img/dungthe.png) | ![Tráo thẻ](img/traothe.png) |
+| ![Sai thẻ](png/saithe.jpg) | ![Đúng thẻ](png/dungthe.jpg) | ![Tráo thẻ](png/traothe.jpg) |
 |:--:|:--:|:--:|
 | **Chọn 2 thẻ sai** | **Chọn 2 thẻ đúng** | **Hiệu ứng tráo thẻ bài** |
 
@@ -362,7 +362,7 @@ flutter test
 
 ###  Chuyển level & kết quả
 
-| ![Qua level](img/qua_level.png) | ![Thua level](img/thua_level.png) |
+| ![Qua level](png/qua_level.jpg) | ![Thua level](png/thua_level.jpg) |
 |:--:|:--:|
 | **Qua level thành công** | **Màn hình thua – hết lượt hoặc hết thời gian** |
 
@@ -370,7 +370,7 @@ flutter test
 
 ###  Cài đặt & bảng xếp hạng
 
-| ![Cài đặt](img/cai_dat.png) | ![Top 5 điểm](img/top5_diem.png) | ![Top 5 level](img/top5_level.png) |
+| ![Cài đặt](png/cai_dat.jpg) | ![Top 5 điểm](png/top5_diem.jpg) | ![Top 5 level](png/top5_level.jpg) |
 |:--:|:--:|:--:|
 | **Tùy chỉnh theme, âm lượng, font chữ,...** | **Bảng xếp hạng theo điểm số** | **Bảng xếp hạng theo level cao nhất** |
 
@@ -378,7 +378,7 @@ flutter test
 
 ###  Thoát game
 
-| ![Thoát](img/exit.png) |
+| ![Thoát](png/exit.jpg) |
 |:--:|
 | **Màn hình thoát game** – xác nhận trước khi rời trò chơi |
 
