@@ -334,49 +334,68 @@ class GameRuntimeController {
     // Thông báo UI cập nhật
     _notify();
 
-    // Xử lý nếu là bom
-    if (card is CM.BombCard) {
-      // Nếu bom đã vô hiệu, úp lại ngay
-      if (card.isDefused) {
-        card.isFaceUp = false;
+    if (card is CM.BombCard && card.isDefused) {
+      card.isFaceUp = false;
+      _flippedIndices.remove(index);
+      _notify();
+      return;
+    }
+
+    if (_flippedIndices.length == 2) {
+      _resolveFlippedPair();
+    }
+  }
+
+  void _resolveFlippedPair() {
+    if (_flippedIndices.length < 2) return;
+
+    final firstIndex = _flippedIndices[0];
+    final secondIndex = _flippedIndices[1];
+    final first = cards[firstIndex];
+    final second = cards[secondIndex];
+
+    final firstBomb = first is CM.BombCard && !first.isDefused;
+    final secondBomb = second is CM.BombCard && !second.isDefused;
+
+    if (firstBomb || secondBomb) {
+      secondsLeft = max(0, secondsLeft - GameConfig.bombPenaltySeconds);
+      SoundManager().playBombHit();
+      Future.delayed(
+          Duration(milliseconds: GameConfig.mismatchFlipBackDelay), () {
+        if (state != GM.GameState.playing) return;
+        if (!first.isMatched) first.isFaceUp = false;
+        if (!second.isMatched) second.isFaceUp = false;
         _flippedIndices.clear();
         _notify();
-        return;
-      }
-
-      // Nếu đã lật 2 thẻ
-      if (_flippedIndices.length == 2) {
-        final a = cards[_flippedIndices[0]];
-        final b = cards[_flippedIndices[1]];
-        // Nếu là thẻ thường và cùng cặp
-        if (a is CM.NormalCard && b is CM.NormalCard && a.pairId == b.pairId) {
-          // Ghép đúng cặp thẻ thường
-          a.isMatched = true;
-          b.isMatched = true;
-          score += GameConfig.pointsPerMatch;
-          _matchedPairs += 1;
-          SoundManager().playMatchSuccess();
-          _flippedIndices.clear();
-          _notify();
-          _checkWin();
-        } else {
-          // Ghép sai, úp lại sau delay
-          Future.delayed(Duration(milliseconds: GameConfig.mismatchFlipBackDelay),
-              () {
-            if (state == GM.GameState.playing) {
-              a.isFaceUp = false;
-              b.isFaceUp = false;
-              _flippedIndices.clear();
-              _notify();
-
-              score = max(0, score - GameConfig.penaltyPerMismatch);
-              SoundManager().playMatchFail();
-              _notify();
-            }
-          });
-        }
-      }
+      });
+      _notify();
+      return;
     }
+
+    if (first is CM.NormalCard &&
+        second is CM.NormalCard &&
+        first.pairId == second.pairId) {
+      first.isMatched = true;
+      second.isMatched = true;
+      score += GameConfig.pointsPerMatch;
+      _matchedPairs += 1;
+      SoundManager().playMatchSuccess();
+      _flippedIndices.clear();
+      _notify();
+      _checkWin();
+      return;
+    }
+
+    Future.delayed(
+        Duration(milliseconds: GameConfig.mismatchFlipBackDelay), () {
+      if (state != GM.GameState.playing) return;
+      if (!first.isMatched) first.isFaceUp = false;
+      if (!second.isMatched) second.isFaceUp = false;
+      _flippedIndices.clear();
+      score = max(0, score - GameConfig.penaltyPerMismatch);
+      SoundManager().playMatchFail();
+      _notify();
+    });
   }
 
   void _checkWin() {
